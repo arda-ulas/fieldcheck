@@ -1,7 +1,12 @@
+using FieldCheck.Api.Contracts;
 using FieldCheck.Api.Data;
 using FieldCheck.Api.Data.Seed;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,15 +17,22 @@ var connectionString = builder.Configuration.GetConnectionString("FieldCheck")
 
 builder.Services.AddDbContext<FieldCheckDbContext>(o => o.UseSqlServer(connectionString));
 builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+    .AddOData(o => o
+        .Select().Filter().OrderBy().Count().SetMaxTop(100)   // $expand deliberately not enabled
+        .AddRouteComponents("odata", BuildEdmModel()))
+    .AddOData(o => o.TimeZone = TimeZoneInfo.Utc);
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
+builder.Services.AddHealthChecks().AddDbContextCheck<FieldCheckDbContext>();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.UseODataRouteDebug();
 
     // Demo data for local exploration. Schema is applied deliberately with `dotnet ef database
     // update`; the app never migrates on startup.
@@ -36,7 +48,16 @@ app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
 
-public partial class Program;
+public partial class Program
+{
+    private static IEdmModel BuildEdmModel()
+    {
+        var b = new ODataConventionModelBuilder();
+        b.EntitySet<InspectionRecord>("Inspections");
+        return b.GetEdmModel();
+    }
+}
