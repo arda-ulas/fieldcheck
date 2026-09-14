@@ -1,6 +1,6 @@
 # Working with coding agents in this repo
 
-Rules for any coding agent (Claude Code, Copilot, Codex, etc.) and for the person directing it.
+Rules for any coding agent used in this repo and for the person directing it.
 
 1. **One story per branch.** Branch names like `story/s1-register-assets` or `chore/ci`. `main`
    changes only through pull requests with CI green.
