@@ -12,7 +12,10 @@ namespace FieldCheck.Api.OData;
 /// </summary>
 public class InspectionsController(FieldCheckDbContext db) : ODataController
 {
-    [EnableQuery(MaxTop = 100, PageSize = 100)]
+    // Only these options are accepted; anything else ($expand, $search, $apply, $compute...) is a 400.
+    [EnableQuery(MaxTop = 100, PageSize = 100,
+        AllowedQueryOptions = AllowedQueryOptions.Filter | AllowedQueryOptions.OrderBy | AllowedQueryOptions.Top
+                            | AllowedQueryOptions.Skip | AllowedQueryOptions.Count | AllowedQueryOptions.Select)]
     public IQueryable<InspectionRecord> Get() =>
         db.Inspections.AsNoTracking().Select(i => new InspectionRecord
         {
