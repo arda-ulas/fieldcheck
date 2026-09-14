@@ -1,6 +1,8 @@
 using FieldCheck.Api.Contracts;
 using FieldCheck.Api.Data;
 using FieldCheck.Api.Data.Seed;
+using FieldCheck.Api.Storage;
+using Azure.Storage.Blobs;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,16 @@ var connectionString = builder.Configuration.GetConnectionString("FieldCheck")
     ?? "Server=localhost;Database=FieldCheck;TrustServerCertificate=True";
 
 builder.Services.AddDbContext<FieldCheckDbContext>(o => o.UseSqlServer(connectionString));
+
+// Blob storage: Azurite locally ("UseDevelopmentStorage=true" is not a secret), a real storage
+// account connection string from App Service configuration in Azure.
+builder.Services.AddSingleton<IPhotoStorage>(sp =>
+{
+    var cs = builder.Configuration.GetConnectionString("BlobStorage")
+        ?? throw new InvalidOperationException("ConnectionStrings:BlobStorage is not configured.");
+    var containerName = builder.Configuration["Storage:PhotoContainer"] ?? "inspection-photos";
+    return new BlobPhotoStorage(new BlobContainerClient(cs, containerName));
+});
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
     .AddOData(o => o

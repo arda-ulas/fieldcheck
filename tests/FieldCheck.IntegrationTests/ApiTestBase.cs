@@ -12,6 +12,7 @@ public abstract class ApiTestBase(FieldCheckApiFactory factory)
         Converters = { new JsonStringEnumConverter() },
     };
 
+    protected FieldCheckApiFactory Factory { get; } = factory;
     protected HttpClient Client { get; } = factory.CreateClient();
 
     protected record SiteDto(int Id, string Name, string Region);
