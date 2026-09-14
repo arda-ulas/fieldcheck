@@ -146,8 +146,9 @@ inside the script's `IF NOT EXISTS ... BEGIN/END` wrapper, fixed by executing th
 Live smoke test (health, S2 critical inspection, S4 report before/after, S5 OData, S6 photo upload
 and SAS link, S3 stale rowversion): [`docs/evidence/smoke-live-2026-09-14.md`](docs/evidence/smoke-live-2026-09-14.md).
 
-Teardown: `rg-fieldcheck` is scheduled for deletion after the evaluation period; the date is
-recorded in `docs/evidence/` when it happens. "Deployed" means for that period only.
+Teardown: `rg-fieldcheck` was deleted on 2026-09-14 (see
+[`docs/evidence/teardown-2026-09-14.md`](docs/evidence/teardown-2026-09-14.md)). The API is no longer
+live; "deployed" refers to that day only.
 
 ## AI-assisted workflow
 
@@ -169,4 +170,4 @@ what the agent produced, what was changed or rejected and why, and how it was ve
   they do not run in parallel across classes.
 - The Azurite arm64 image failed to start on this machine's Docker engine; the README uses the amd64
   image under emulation.
-- Deployed to Azure only for the evaluation period noted in the deployment record.
+- Was deployed to Azure for one day (2026-09-14); the resources have since been deleted.
