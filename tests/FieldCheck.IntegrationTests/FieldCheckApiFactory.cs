@@ -1,6 +1,8 @@
 using FieldCheck.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using FieldCheck.Api.Data.Seed;
+using FieldCheck.Api.Storage;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,10 +18,14 @@ public sealed class FieldCheckApiFactory : WebApplicationFactory<Program>, IAsyn
 {
     private readonly MsSqlContainer _sql = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest").Build();
 
+    public InMemoryPhotoStorage Photos { get; } = new();
+
     protected override void ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:FieldCheck", _sql.GetConnectionString());
+        builder.UseSetting("ConnectionStrings:BlobStorage", "UseDevelopmentStorage=true"); // replaced below
+        builder.ConfigureTestServices(services => services.AddSingleton<IPhotoStorage>(Photos));
     }
 
     public async Task InitializeAsync()
