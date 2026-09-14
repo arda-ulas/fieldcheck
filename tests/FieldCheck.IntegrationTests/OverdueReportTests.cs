@@ -45,6 +45,7 @@ public class OverdueReportTests(FieldCheckApiFactory factory) : ApiTestBase(fact
         Assert.Equal(20, rows.Single(r => r.AssetId == twenty.Id).DaysOverdue);
         Assert.Equal(10, rows.Single(r => r.AssetId == ten.Id).DaysOverdue);
         Assert.Equal("Minor", rows.Single(r => r.AssetId == ten.Id).LastSeverity);
+        Assert.Equal(DateTimeKind.Utc, rows.Single(r => r.AssetId == ten.Id).LastInspectedAtUtc!.Value.Kind);
         Assert.DoesNotContain(rows, r => r.AssetId == fresh.Id);
     }
 
