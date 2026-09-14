@@ -9,7 +9,6 @@ namespace FieldCheck.Api.Controllers;
 
 [ApiController]
 [ODataIgnored] // shares its name with the OData "Inspections" entity set; keep OData conventions off it
-[Produces("application/json")]
 public class InspectionsController(FieldCheckDbContext db) : ControllerBase
 {
     [HttpGet("api/inspections/{id:int}")]

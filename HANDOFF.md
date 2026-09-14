@@ -6,10 +6,12 @@ summary of what matters is in `docs/stories.md` and `AGENTS.md`.
 ## Current state
 - Block 0 done: .NET 10.0.401, Docker Desktop (Rosetta), SQL Server 2022 container `fieldcheck-sql` on 1433, Azurite `fieldcheck-azurite` on 10000 (run as amd64), repo public with secret scanning.
 - Block 1 merged (PR #1): solution skeleton, smoke tests, CI.
-- Block 2 on branch `story/schema-migrations`: entities, DbContext, migrations (InitialSchema + TsqlObjects), T-SQL in `src/FieldCheck.Api/Data/Sql/`, demo seeder. Applied and verified against local SQL Server.
+- Block 2 merged (PR #2): entities, DbContext, migrations (InitialSchema + TsqlObjects), T-SQL in `src/FieldCheck.Api/Data/Sql/`, demo seeder.
+- Block 3 merged (PR #3): S1–S3 endpoints. Block 4 merged (PR #4): S4 report, S5 OData, /health, Scalar.
+- Block 5 on branch `story/tests` (PR #5): 13 unit + 24 integration tests, all green locally.
 
 ## Next step
-- Checkpoint (b) approval, then Block 3: S1–S3 endpoints (DTOs, validation, ProblemDetails, critical-inspection transaction, rowversion concurrency), then S4 report + S5 OData, then tests.
+- Checkpoint (c) approval, then checkpoint (d) plan for Azure (needs `az login`), then S6 photos (Azurite locally), README, evidence.
 
 ## Open issues
 - Azurite arm64 image fails with `exec format error` on this Docker engine; using `--platform linux/amd64`.
