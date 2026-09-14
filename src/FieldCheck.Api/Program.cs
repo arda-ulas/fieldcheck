@@ -1,5 +1,6 @@
 using FieldCheck.Api.Data;
 using FieldCheck.Api.Data.Seed;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,9 @@ var connectionString = builder.Configuration.GetConnectionString("FieldCheck")
     ?? "Server=localhost;Database=FieldCheck;TrustServerCertificate=True";
 
 builder.Services.AddDbContext<FieldCheckDbContext>(o => o.UseSqlServer(connectionString));
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -28,6 +31,9 @@ if (app.Environment.IsDevelopment())
     }
 }
 
+// Unhandled exceptions and bare status codes both become RFC 9457 ProblemDetails responses.
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.MapControllers();
 
