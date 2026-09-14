@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FieldCheck.Api/FieldCheck.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FieldCheck.IntegrationTests/FieldCheck.IntegrationTests.csproj" />
+    <Project Path="tests/FieldCheck.UnitTests/FieldCheck.UnitTests.csproj" />
+  </Folder>
+</Solution>
