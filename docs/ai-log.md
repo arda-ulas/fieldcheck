@@ -51,3 +51,9 @@ and reviewed by Arda Ulaş Özdemir. Honest entries only.
 - **Produced:** `az` CLI commands (providers registered, `rg-fieldcheck`, `stfieldcheckdcb438` + `inspection-photos`, `sql-fieldcheck-dcb438`/`sqldb-fieldcheck` on GP_S_Gen5 free limit, `asp-fieldcheck` F1 + `app-fieldcheck-dcb438`), firewall rules for Azure services and the developer IP, connection strings and `ASPNETCORE_FORWARDEDHEADERS_ENABLED` set through `az webapp config`, zip deploy, live smoke-test script whose output is `docs/evidence/smoke-live-2026-09-14.md`.
 - **Changed/rejected:** (1) The first `az sql db create --use-free-limit` was rejected until the serverless SLO (GP Gen5, 2 vCores) was given explicitly. (2) The idempotent migration script failed on Azure SQL because CREATE PROCEDURE cannot sit inside the generated IF block; fixed in PR #8 by wrapping the SQL in `EXEC(N'...')`, re-verified on a fresh Testcontainers database (32 integration tests) before re-applying to Azure. (3) Raw `SqlQuery` rows bypassed the UTC converter, so the report's `lastInspectedAtUtc` lacked the `Z`; fixed in the controller with a test assertion on `DateTimeKind`. The SQL admin password was generated locally and passed only to `az` and `sqlcmd`; it was never printed or committed.
 - **Verified:** `/health` 200 Healthy; S2 Critical → asset OutOfService; S4 report excludes it and shows CNV-201 overdue by 6 with never-inspected rows first; S5 OData filter 200 and `$top=500` 400; S6 upload 201, SAS fetch byte-identical, anonymous blob URL denied (409 PublicAccessNotPermitted), PDF 400; S3 stale RowVersion 409. Full output in `docs/evidence/`.
+
+## Teardown (2026-09-14T20:02:47Z)
+- **Asked:** delete `rg-fieldcheck` and record the date.
+- **Produced:** `az group delete`, `docs/evidence/teardown-2026-09-14.md`, README and HANDOFF updated.
+- **Changed/rejected:** none.
+- **Verified:** `az group exists` false; live URL no longer resolves.

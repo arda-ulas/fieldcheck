@@ -10,10 +10,10 @@ summary of what matters is in `docs/stories.md` and `AGENTS.md`.
 - Block 3 merged (PR #3): S1–S3 endpoints. Block 4 merged (PR #4): S4 report, S5 OData, /health, Scalar.
 - Block 5 merged (PR #5): 13 unit + 24 integration tests.
 - S6 merged (PR #6), README merged (PR #7), idempotent-migration fix merged (PR #8).
-- Azure deployed 2026-09-14: see README *Deployment record* and `docs/evidence/smoke-live-2026-09-14.md`. Live URL https://app-fieldcheck-dcb438.azurewebsites.net
+- Azure deployed 2026-09-14: see README *Deployment record* and `docs/evidence/smoke-live-2026-09-14.md`. Live URL was https://app-fieldcheck-dcb438.azurewebsites.net (deleted 2026-09-14T20:02:47Z)
 
 ## Next step
-- Redeploy from final `main` SHA, clean-clone test run, spec §12 evidence checklist; later: delete `rg-fieldcheck` and record the date in `docs/evidence/`.
+- Project complete. Azure resources deleted 2026-09-14T20:02:47Z (see `docs/evidence/teardown-2026-09-14.md`). Remaining: copy the §12 evidence checklist into Career OS `projects/fieldcheck/`.
 
 ## Open issues
 - Azurite arm64 image fails with `exec format error` on this Docker engine; using `--platform linux/amd64`.
