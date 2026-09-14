@@ -2,11 +2,13 @@ using FieldCheck.Api.Contracts;
 using FieldCheck.Api.Data;
 using FieldCheck.Api.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Attributes;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldCheck.Api.Controllers;
 
 [ApiController]
+[ODataIgnored] // shares its name with the OData "Inspections" entity set; keep OData conventions off it
 [Produces("application/json")]
 public class InspectionsController(FieldCheckDbContext db) : ControllerBase
 {
