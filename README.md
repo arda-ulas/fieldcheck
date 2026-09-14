@@ -127,7 +127,27 @@ with a private `inspection-photos` container, and a Linux App Service running th
 strings live in App Service configuration, not in the repo. The schema is applied deliberately with
 `dotnet ef migrations script --idempotent` against Azure SQL; the app never migrates on startup.
 
-Status and smoke-test output: see the *Deployment record* section below once the deployment exists.
+### Deployment record
+
+Deployed 2026-09-14 to subscription "Azure for Students", resource group `rg-fieldcheck`, Canada Central:
+
+| Resource | Name | Tier |
+|---|---|---|
+| App Service plan + Web App | `asp-fieldcheck`, `app-fieldcheck-dcb438` | Linux F1 (free), `DOTNETCORE\|10.0`, HTTPS only |
+| Azure SQL server + database | `sql-fieldcheck-dcb438`, `sqldb-fieldcheck` | General Purpose serverless Gen5, **free offer** (auto-pause on exhaustion) |
+| Storage account + container | `stfieldcheckdcb438`, `inspection-photos` | Standard LRS, public blob access disabled |
+| API Management | not deployed (stretch goal, cut) | |
+
+Firewall: Azure services + the developer's IP only. Schema applied by running the idempotent
+migration script through `sqlcmd`; the first attempt failed because `CREATE PROCEDURE` cannot sit
+inside the script's `IF NOT EXISTS ... BEGIN/END` wrapper, fixed by executing the SQL through
+`EXEC(N'...')` in the migration (PR #8). Deployed with `az webapp deploy` from a `dotnet publish` zip.
+
+Live smoke test (health, S2 critical inspection, S4 report before/after, S5 OData, S6 photo upload
+and SAS link, S3 stale rowversion): [`docs/evidence/smoke-live-2026-09-14.md`](docs/evidence/smoke-live-2026-09-14.md).
+
+Teardown: `rg-fieldcheck` is scheduled for deletion after the evaluation period; the date is
+recorded in `docs/evidence/` when it happens. "Deployed" means for that period only.
 
 ## AI-assisted workflow
 
