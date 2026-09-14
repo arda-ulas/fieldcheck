@@ -7,7 +7,6 @@ namespace FieldCheck.Api.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-[Produces("application/json")]
 public class ReportsController(FieldCheckDbContext db) : ControllerBase
 {
     /// <summary>

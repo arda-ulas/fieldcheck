@@ -8,7 +8,6 @@ namespace FieldCheck.Api.Controllers;
 
 [ApiController]
 [Route("api/sites")]
-[Produces("application/json")]
 public class SitesController(FieldCheckDbContext db) : ControllerBase
 {
     [HttpGet]
