@@ -6,10 +6,8 @@ severity; a critical finding takes the asset out of service. Supervisors query i
 OData and pull an overdue-assets report backed by a T-SQL stored procedure. Photos go to Azure Blob
 Storage.
 
-This is a one-day personal portfolio project (built 2026-09-14) whose purpose is to show working,
-tested code on this stack: **C# / ASP.NET Core (.NET 10), SQL Server and hand-written T-SQL, EF Core,
-OData, Azure (App Service, Azure SQL, Blob Storage), xUnit + Testcontainers, GitHub Actions.** It has
-no users and makes no claims about production readiness or scale.
+Stack: **C# / ASP.NET Core (.NET 10), EF Core, SQL Server with hand-written T-SQL, ASP.NET Core
+OData, Azure (App Service, Azure SQL, Blob Storage), xUnit + Testcontainers, GitHub Actions.**
 
 ## Architecture
 
@@ -26,7 +24,7 @@ Hosting: Azure App Service (Linux) · CI: GitHub Actions (build + unit + integra
 ```
 
 Layout: `src/FieldCheck.Api` (API), `tests/FieldCheck.UnitTests`, `tests/FieldCheck.IntegrationTests`,
-`docs/` (stories, AI log), `AGENTS.md` (rules for AI-assisted work), `HANDOFF.md` (session state).
+`docs/` (stories, agent review log, deployment evidence), `AGENTS.md` (rules for coding agents).
 
 ## Run locally
 
@@ -129,14 +127,14 @@ strings live in App Service configuration, not in the repo. The schema is applie
 
 ### Deployment record
 
-Deployed 2026-09-14 to subscription "Azure for Students", resource group `rg-fieldcheck`, Canada Central:
+Deployed 2026-09-14 to resource group `rg-fieldcheck`, Canada Central:
 
 | Resource | Name | Tier |
 |---|---|---|
 | App Service plan + Web App | `asp-fieldcheck`, `app-fieldcheck-dcb438` | Linux F1 (free), `DOTNETCORE\|10.0`, HTTPS only |
 | Azure SQL server + database | `sql-fieldcheck-dcb438`, `sqldb-fieldcheck` | General Purpose serverless Gen5, **free offer** (auto-pause on exhaustion) |
 | Storage account + container | `stfieldcheckdcb438`, `inspection-photos` | Standard LRS, public blob access disabled |
-| API Management | not deployed (stretch goal, cut) | |
+| API Management | not deployed | |
 
 Firewall: Azure services + the developer's IP only. Schema applied by running the idempotent
 migration script through `sqlcmd`; the first attempt failed because `CREATE PROCEDURE` cannot sit
@@ -146,21 +144,22 @@ inside the script's `IF NOT EXISTS ... BEGIN/END` wrapper, fixed by executing th
 Live smoke test (health, S2 critical inspection, S4 report before/after, S5 OData, S6 photo upload
 and SAS link, S3 stale rowversion): [`docs/evidence/smoke-live-2026-09-14.md`](docs/evidence/smoke-live-2026-09-14.md).
 
-Teardown: `rg-fieldcheck` was deleted on 2026-09-14 (see
-[`docs/evidence/teardown-2026-09-14.md`](docs/evidence/teardown-2026-09-14.md)). The API is no longer
-live; "deployed" refers to that day only.
+The resources were deleted after the deployment was verified (see
+[`docs/evidence/teardown-2026-09-14.md`](docs/evidence/teardown-2026-09-14.md)); the API is not
+currently hosted.
 
-## AI-assisted workflow
+## Working with coding agents
 
-This project was built with Claude Code (Claude Fable 5.1) under the rules in [`AGENTS.md`](AGENTS.md):
-one story per branch, a plan approved before code, no secrets in prompts or code, every diff read
-before commit, tests green before merge, package APIs verified rather than guessed, and the T-SQL
-hand-written and explained. [`docs/ai-log.md`](docs/ai-log.md) records, per story, what was asked,
-what the agent produced, what was changed or rejected and why, and how it was verified.
+Coding agents are used in this repo under the rules in [`AGENTS.md`](AGENTS.md): one story per
+branch, a plan approved before code, no secrets in prompts or code, every generated diff read before
+commit, tests green before merge, package APIs verified against documentation rather than guessed,
+and the T-SQL written and explained by a person. [`docs/ai-log.md`](docs/ai-log.md) is the review
+log: per story, what was asked, what the agent produced, what was changed or rejected and why, and
+how it was verified.
 
 ## Known limitations
 
-- No authentication or authorization; every endpoint is open. Out of scope for a one-day project.
+- No authentication or authorization; every endpoint is open.
 - Photos are validated by content type, size, and magic bytes only; no image decoding.
 - Orphan blobs are possible if the metadata insert fails after a successful upload (documented in
   `PhotosController`); there is no cleanup job.
@@ -170,4 +169,4 @@ what the agent produced, what was changed or rejected and why, and how it was ve
   they do not run in parallel across classes.
 - The Azurite arm64 image failed to start on this machine's Docker engine; the README uses the amd64
   image under emulation.
-- Was deployed to Azure for one day (2026-09-14); the resources have since been deleted.
+- Not currently hosted; the Azure resources were deleted after the deployment was verified.
