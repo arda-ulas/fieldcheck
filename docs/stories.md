@@ -10,7 +10,7 @@ As a site coordinator, I register an asset with an inspection interval.
 |---|---|
 | Given a site exists, when I POST a valid asset, then `201` with a `Location` header | `AssetsTests.Post_ValidAsset_Returns201WithLocation` |
 | Given an asset tag already exists at that site, when I POST the same tag, then `409` | `AssetsTests.Post_DuplicateTagAtSameSite_Returns409` |
-| Given `InspectionIntervalDays` is 0 or > 365, then `400` ProblemDetails naming the field | `AssetValidationTests.IntervalOutOfRange_FailsNamingField` (unit), `AssetsTests.Post_IntervalOutOfRange_Returns400NamingField` |
+| Given `InspectionIntervalDays` is 0 or > 365, then `400` ProblemDetails naming the field | `AssetsTests.Post_IntervalOutOfRange_Returns400NamingField` (0 and 366) |
 
 ## S2 — Log an inspection
 As an inspector, I log an inspection against an asset.
@@ -34,7 +34,7 @@ As a supervisor, I see which assets are overdue for inspection.
 
 | Given / When / Then | Test |
 |---|---|
-| An asset is overdue if never inspected, or its latest inspection is older than `InspectionIntervalDays` | `OverdueCalculatorTests.*` (unit), `OverdueReportTests.NeverInspectedAsset_IsOverdue` |
+| An asset is overdue if never inspected, or its latest inspection is older than `InspectionIntervalDays` | `OverdueCalculatorTests.*` (unit), `OverdueReportTests.NeverInspectedAsset_IsOverdue`, `OverdueReportTests.Report_WithoutSiteId_SpansSites` |
 | `GET /api/reports/overdue-assets?siteId=` returns overdue assets with `DaysOverdue`, most overdue first, via `dbo.usp_GetOverdueAssets` | `OverdueReportTests.Report_OrdersMostOverdueFirst_WithDaysOverdue` |
 | Out-of-service assets are excluded | `OverdueReportTests.OutOfServiceAsset_IsExcluded` |
 
@@ -43,8 +43,8 @@ As an analyst, I query inspections.
 
 | Given / When / Then | Test |
 |---|---|
-| `GET /odata/Inspections?$filter=Severity eq 'Critical'&$orderby=InspectedAtUtc desc&$top=10&$count=true` works | `ODataTests.FilterOrderTopCount_Works` |
-| `$top` is capped at 100; unsupported query options return `400` | `ODataTests.TopAboveCap_Returns400`, `ODataTests.UnsupportedOption_Returns400` |
+| `GET /odata/Inspections?$filter=Severity eq 'Critical'&$orderby=InspectedAtUtc desc&$top=10&$count=true` works | `ODataTests.FilterOrderTopCount_Works`, `ODataTests.OrderByDesc_ReturnsNewestFirst` |
+| `$top` is capped at 100; unsupported query options return `400` | `ODataTests.TopAboveCap_Returns400`, `ODataTests.UnsupportedOption_Returns400` ($expand, $search, $apply) |
 
 ## S6 — Inspection photos
 As an inspector, I attach a photo.
@@ -54,3 +54,8 @@ As an inspector, I attach a photo.
 | `POST /api/inspections/{id}/photos` accepts JPEG/PNG ≤ 5 MB, stores the blob, records metadata | `PhotosTests.Post_Jpeg_StoresBlobAndMetadata` |
 | Other content types or oversize files return `400`; unknown inspection returns `404` | `PhotosTests.Post_UnsupportedContentType_Returns400`, `PhotosTests.Post_Oversize_Returns400`, `PhotosTests.Post_UnknownInspection_Returns404` |
 | `GET /api/photos/{id}` returns a short-lived read SAS URL; container is never public | `PhotosTests.Get_ReturnsShortLivedSasUrl` |
+
+## Ops
+| Given / When / Then | Test |
+|---|---|
+| `GET /health` returns `Healthy` when the database is reachable | `HealthTests.Health_ReportsHealthy_WhenDatabaseReachable` |

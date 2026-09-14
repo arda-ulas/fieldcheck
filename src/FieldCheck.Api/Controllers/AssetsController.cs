@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 namespace FieldCheck.Api.Controllers;
 
 [ApiController]
-[Produces("application/json")]
 public class AssetsController(FieldCheckDbContext db) : ControllerBase
 {
     // SQL Server error numbers for unique index / unique constraint violations.
